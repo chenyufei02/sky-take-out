@@ -23,8 +23,8 @@ public class JwtUtil {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
         // 生成JWT的时间
-        long expMillis = System.currentTimeMillis() + ttlMillis;
-        Date exp = new Date(expMillis);
+        long expMillis = System.currentTimeMillis() + ttlMillis;  // 过期时间
+        Date exp = new Date(expMillis); // 过期时间
 
         // 设置jwt的body
         JwtBuilder builder = Jwts.builder()
