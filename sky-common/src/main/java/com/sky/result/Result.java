@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 后端统一返回结果
+ * 后端统一返回结果（封装code msg data） 泛型是指data
  * @param <T>
  */
 @Data

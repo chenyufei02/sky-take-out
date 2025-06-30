@@ -1,10 +1,13 @@
 package com.sky.config;
 
 import com.sky.interceptor.JwtTokenAdminInterceptor;
+import com.sky.json.JacksonObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -14,6 +17,8 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+
+import java.util.List;
 
 /**
  * 配置类，注册web层相关组件
@@ -64,5 +69,22 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
+
+    /**
+     * 扩展spring MVC框架诶的消息转换器 统一对日期进行格式化处理
+     * @param [converters]
+     * @return void
+     * @author yufei
+     * @since 2025/6/30
+     */
+    protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        // 使用框架提供的工具类创建一个消息转换器
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        // 为消息转换器创建一个自定义的对象转换器（代码一般是固定的），该对象转换器可以将JAVA对象序列化为JSON数据
+        converter.setObjectMapper(new JacksonObjectMapper());
+        // 将自己定义的消息转换器添加到消息转换器容器中，并且排序设置为0
+        converters.add(0,converter);
+
     }
 }

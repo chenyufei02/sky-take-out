@@ -1,16 +1,20 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.servlet.LocaleResolver;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -92,5 +97,46 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.insert(employee);
     }
 
+    /**
+     * 分页查询
+     * @param [employeePageQueryDTO]
+     * @return com.sky.result.PageResult
+     * @author yufei
+     * @since 2025/6/30
+     */
+    @Override
+    public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+        // select * from employee limit 0,10
+
+        // 采用MYBATIS框架下的PageHelper 动态拼接页码 分页查询
+        PageHelper.startPage(employeePageQueryDTO.getPage(),employeePageQueryDTO.getPageSize(),"create_time desc");
+
+
+        // Page是框架指定的。Employee是返回值pageresult里除了total以外用employee刚好封装的数据（接口规定的records）
+        // 返回的是装了一些Employee 的page对象，但实际应当返回pageresult对象装total和records（返回数据集合）
+        Page<Employee> page = employeeMapper.pageQuery(employeePageQueryDTO);
+
+        // 从page中获取total和records
+        long total = page.getTotal();
+        List<Employee> records = page.getResult();
+
+        return new PageResult(total,records);  //返回pageresult对象
+    }
+
+    /**
+     * 启用禁用员工账号
+     * @param [s, id]
+     * @return void
+     * @author yufei
+     * @since 2025/6/30
+     */
+    public void startOrstop(Integer status, Long id) {
+        // update employee set status = ? where id = ?
+        // 但希望用一个更通用的动态SQL的update语句可通用的用于所有修改情况
+        Employee employee = new Employee();
+        employee.setStatus(status);
+        employee.setId(id);
+        employeeMapper.update(employee);
+    }
 
 }

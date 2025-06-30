@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 封装分页查询结果
+ * 封装分页查询结果(返回值的Data部分)
  */
 @Data
 @AllArgsConstructor
