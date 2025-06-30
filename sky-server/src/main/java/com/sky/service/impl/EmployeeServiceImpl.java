@@ -139,4 +139,31 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.update(employee);
     }
 
+    /**
+     * 根据ID查询员工
+     * @param [id]
+     * @return com.sky.entity.Employee
+     * @author yufei
+     * @since 2025/6/30
+     */
+    public Employee getById(Long id) {
+        Employee employee =employeeMapper.getById(id);
+        employee.setPassword("****"); //把密码手动设置为****返回（没有真改数据库！只是在Java里设置了数据库里查回的对象的属性）
+        return employee;
+    }
+
+    @Override
+    public void update(EmployeeDTO employeeDTO) {
+        // 想直接复用修改员工状态信息时在employeemapper里已经定义好的update方法。但那个方法要求传入employee对象。因此建新对象进行属性拷贝
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO,employee);
+
+        // 并手动设置修改时间
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+
+        // 调用mapper里已经定义好的更新方法
+        employeeMapper.update(employee);
+    }
+
 }

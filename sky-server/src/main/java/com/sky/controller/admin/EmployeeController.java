@@ -114,12 +114,44 @@ public class EmployeeController {
      */
     @PostMapping("/status/{status}")
     @ApiOperation("启用禁用员工账号")
-    // 要返回data数据的时候才要加上泛型，这里只是返回code状态码即可不用返回什么数据
+    // 要返回data数据的时候才要加上泛型，这里只是提交操作 返回code状态码即可不用返回什么数据
     // status是放在请求路径里的参数 要声明@PathVariable("status")注解 并且括号里对应请求路径里{status}的变量名。
     public Result startOrstop(@PathVariable("status") Integer status, Long id){
         log.info("启用禁用员工账号:{},{}",id,status);
         employeeService.startOrstop(status,id);
         return  Result.success();
     }
+
+
+    /**
+     * 根据ID查询员工信息
+     * @param [id]
+     * @return com.sky.result.Result<com.sky.entity.Employee>
+     * @author yufei
+     * @since 2025/6/30
+     */
+    @GetMapping("/{id}")
+    @ApiOperation("根据ID查询员工信息")
+    public Result<Employee> getById(@PathVariable("id") Long id){
+        Employee employee = employeeService.getById(id);
+        return Result.success(employee);
+    }
+
+
+    /**
+     * 修改员工信息
+     * @param [employeeDTO]
+     * @return com.sky.result.Result
+     * @author yufei
+     * @since 2025/6/30
+     */
+    @PutMapping
+    @ApiOperation("编辑员工信息")
+    public Result update(@RequestBody EmployeeDTO employeeDTO){
+        log.info("编辑员工信息：{}",employeeDTO);
+        employeeService.update(employeeDTO);
+        return Result.success();
+    }
+
 
 }

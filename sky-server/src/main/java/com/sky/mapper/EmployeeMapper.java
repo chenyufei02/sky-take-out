@@ -16,6 +16,8 @@ public interface EmployeeMapper {
      */
     @Select("select * from employee where username = #{username}")
     Employee getByUsername(String username);
+
+
     /**
      * 插入员工数据
      * @param employee
@@ -29,6 +31,7 @@ public interface EmployeeMapper {
             "#{createTime},#{updateTime},#{createUser},#{updateUser},#{status})")
     void insert(Employee employee);
 
+
     /**
      * 分页查询 动态SQL选择不用select注解
      * @param [employeePageQueryDTO]
@@ -38,6 +41,7 @@ public interface EmployeeMapper {
      */
     Page<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
 
+
     /**
      * 根据ID动态修改SQL语句以update更新数据
      * @param [employee]
@@ -46,4 +50,15 @@ public interface EmployeeMapper {
      * @since 2025/6/30
      */
     void update(Employee employee);
+
+
+    /**
+     * 根据ID查询员工信息
+     * @param [id]
+     * @return com.sky.entity.Employee
+     * @author yufei
+     * @since 2025/6/30
+     */
+    @Select("select * from employee where id = #{id}")
+    Employee getById(Long id);
 }
