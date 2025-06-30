@@ -88,6 +88,7 @@ public class EmployeeController {
         return Result.success();
     }
 
+
     /**
      * 分页查询
      * @param [employeePageQueryDTO]
@@ -97,13 +98,15 @@ public class EmployeeController {
      */
     @GetMapping("/page")
     @ApiOperation("员工分页查询")
-    // 返回的是一个装了很多个页结果的result集合
-    // 每一个pageresult包括当页的所有数据（总记录数total和数据集合records）
+    // 返回的是一个装了很多个页结果的result集合（每一页result的data是pageresult）
+    // 每一页的pageresult包括当页的所有数据（总记录数total和数据集合records）
+    // 没有用@RequestBody 注解的时候，方法的参数自动绑定query里的值
     public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
         log.info("分页查询，参数为{}",employeePageQueryDTO);
         PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
         return Result.success(pageResult);
     }
+
 
     /**
      * 启用禁用员工账号

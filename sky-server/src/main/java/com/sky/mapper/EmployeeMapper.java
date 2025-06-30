@@ -1,8 +1,10 @@
 package com.sky.mapper;
 
 import com.github.pagehelper.Page;
+import com.sky.annotation.AutoFill;
 import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
+import com.sky.enumeration.OperationType;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -29,6 +31,7 @@ public interface EmployeeMapper {
             "create_time, update_time, create_user, update_user,status) values " +
             "(#{name},#{username},#{password},#{phone},#{sex},#{idNumber}," +
             "#{createTime},#{updateTime},#{createUser},#{updateUser},#{status})")
+    @AutoFill(value = OperationType.INSERT)  // 定义自定义的拦截类且说明修饰的方法为插入方法 需要被拦截
     void insert(Employee employee);
 
 
@@ -49,6 +52,7 @@ public interface EmployeeMapper {
      * @author yufei
      * @since 2025/6/30
      */
+    @AutoFill(value = OperationType.UPDATE)  // 定义自定义的拦截类且说明修饰的方法为插入方法 需要被拦截
     void update(Employee employee);
 
 

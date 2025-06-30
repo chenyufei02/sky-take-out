@@ -85,13 +85,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setStatus(StatusConstant.ENABLE);
         // 设置默认密码 并且用工具类加密后存入
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
-        // 设置记录创建时间和更新时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        // 设置当前记录的修改人和创建人ID
-        // 用BaseContext里的静态变量ThreadLocal记录的当前登录的用户的ID
-        employee.setCreateUser(BaseContext.getCurrentId());
-        employee.setUpdateUser(BaseContext.getCurrentId());
+
+//        // 设置记录创建时间和更新时间
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());  这部分已经在mapper层调用新增方法时用自定义注解实现了公共字段自动填充
+//        // 设置当前记录的修改人和创建人ID
+//        // 用BaseContext里的静态变量ThreadLocal记录的当前登录的用户的ID
+//        employee.setCreateUser(BaseContext.getCurrentId());
+//        employee.setUpdateUser(BaseContext.getCurrentId());
 
         // 调用mapper创建并执行新增员工的方法
         employeeMapper.insert(employee);
@@ -111,12 +112,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 采用MYBATIS框架下的PageHelper 动态拼接页码 分页查询
         PageHelper.startPage(employeePageQueryDTO.getPage(),employeePageQueryDTO.getPageSize(),"create_time desc");
 
-
-        // Page是框架指定的。Employee是返回值pageresult里除了total以外用employee刚好封装的数据（接口规定的records）
-        // 返回的是装了一些Employee 的page对象，但实际应当返回pageresult对象装total和records（返回数据集合）
+        // Page是框架指定的，page对象本身只是一个能装很多实体类的列表。
+        // Page里存好返回的一页的所有Employee以后，可以自动用page.getTotal()获取一页的总记录数total
         Page<Employee> page = employeeMapper.pageQuery(employeePageQueryDTO);
 
-        // 从page中获取total和records
+        /* 由于上面mapper层返回的是装了一些Employee 的page对象，但page对象本身只是一个能装很多实体类的列表，无
+           法按接口格式同时返回total和当页的数据集合records   */
+        // 故实际应当返回pageresult对象封装两个属性：total和records（返回数据的集合）.
+        // 因此此时需要先从page中获取total和records出来 存到pageresult返回
         long total = page.getTotal();
         List<Employee> records = page.getResult();
 
@@ -158,9 +161,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO,employee);
 
-        // 并手动设置修改时间
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser(BaseContext.getCurrentId());
+//        // 并手动设置修改时间
+//        employee.setUpdateTime(LocalDateTime.now());   这部分已经在mapper层调用修改方法时用自定义注解实现了公共字段自动填充
+//        employee.setUpdateUser(BaseContext.getCurrentId());
 
         // 调用mapper里已经定义好的更新方法
         employeeMapper.update(employee);
